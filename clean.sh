@@ -1,6 +1,11 @@
-cd kernel/
-make clean
-cd ..
-rm WinterOS.iso
-cd configurations/boot
-rm WinterOS.bin
+#!/bin/sh
+set -e
+. ./config.sh
+
+for PROJECT in $PROJECTS; do
+  (cd $PROJECT && $MAKE clean)
+done
+
+rm -rf sysroot
+rm -rf isodir
+rm -rf WinterOS.iso

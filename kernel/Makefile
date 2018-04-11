@@ -1,27 +1,83 @@
-OBJECTS:=kernel/kernel.o kernel/test.o boot/boot.o
-CC:=i686-elf-g++
-SYSROOTINCLUDE:=../sysroot/usr/include/
-CCFLAGS:=-g -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -isystem $(SYSROOTINCLUDE) -D__is_kernel -Iinclude
-LD:=i686-elf-g++
-LDFLAGS:=-ffreestanding -nostdlib
-ASM:=nasm
-ASMFLAGS:= -felf32
+DEFAULT_HOST!=../default-host.sh
+HOST?=DEFAULT_HOST
+HOSTARCH!=../target-triplet-to-arch.sh $(HOST)
 
-LINKER.LD_PATH:=../configurations/linker/linker.ld
+CFLAGS?=-O2 -g
+CPPFLAGS?=
+LDFLAGS?=
+LIBS?=
 
-.PHONY: all clean
+DESTDIR?=
+PREFIX?=/usr/local
+EXEC_PREFIX?=$(PREFIX)
+BOOTDIR?=$(EXEC_PREFIX)/boot
+INCLUDEDIR?=$(PREFIX)/include
 
-all: WinterOS.bin
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
+CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
+LDFLAGS:=$(LDFLAGS)
+LIBS:=$(LIBS) -nostdlib -lk -lgcc
 
-WinterOS.bin: $(OBJECTS)
-	$(LD) -T $(LINKER.LD_PATH) -o WinterOS.bin $(LDFLAGS) $(OBJECTS) -lgcc
+ARCHDIR=arch/$(HOSTARCH)
 
-%.o: %.cpp
-	$(CC) -MD -c $< -o $@ $(CCFLAGS)
+include $(ARCHDIR)/make.config
 
-%.o: %.asm
-	$(ASM) $(ASMFLAGS) $< -o $@
+CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
+CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
+LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS)
+LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
+
+KERNEL_OBJS=\
+$(KERNEL_ARCH_OBJS) \
+kernel/kernel.o \
+
+OBJS=\
+$(ARCHDIR)/crti.o \
+$(ARCHDIR)/crtbegin.o \
+$(KERNEL_OBJS) \
+$(ARCHDIR)/crtend.o \
+$(ARCHDIR)/crtn.o \
+
+LINK_LIST=\
+$(LDFLAGS) \
+$(ARCHDIR)/crti.o \
+$(ARCHDIR)/crtbegin.o \
+$(KERNEL_OBJS) \
+$(LIBS) \
+$(ARCHDIR)/crtend.o \
+$(ARCHDIR)/crtn.o \
+
+.PHONY: all clean install install-headers install-kernel
+.SUFFIXES: .o .c .S
+
+all: WinterOS.kernel 
+
+WinterOS.kernel: $(OBJS) $(ARCHDIR)/linker.ld
+	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
+	grub-file --is-x86-multiboot WinterOS.kernel
+
+$(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
+	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
+
+.c.o:
+	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
+
+.S.o:
+	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
-	find . -type f -name '*.o' -delete
-	rm WinterOS.bin
+	rm -f WinterOS.kernel
+	rm -f $(OBJS) *.o */*.o */*/*.o
+	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
+
+install: install-headers install-kernel
+
+install-headers:
+	mkdir -p $(DESTDIR)$(INCLUDEDIR)
+	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
+
+install-kernel: WinterOS.kernel
+	mkdir -p $(DESTDIR)$(BOOTDIR)
+	cp WinterOS.kernel $(DESTDIR)$(BOOTDIR)
+
+-include $(OBJS:.o=.d)
