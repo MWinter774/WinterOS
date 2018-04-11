@@ -3,7 +3,7 @@
 void kmain()
 {
 	terminal_putchar(0, 'H', 1, 13);
-	terminal_putchar(1, 'e', 2, 12);
+	terminal_putchar(1, 'e', 2, 12); 
 	terminal_putchar(2, 'l', 3, 11);
 	terminal_putchar(3, 'l', 4, 10);
 	terminal_putchar(4, 'o', 5, 9);
