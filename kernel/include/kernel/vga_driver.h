@@ -1,6 +1,6 @@
 #ifndef _KERNEL_FRAME_BUFFER_H
 #define _KERNEL_FRAME_BUFFER_H
-
+#include <stdbool.h>
 #define VGA_COLS 80
 #define VGA_ROWS 25
 
@@ -32,7 +32,7 @@ foregroundColor - the color of the char(see vga_color enum for available colors)
 backgroundColor - the color of the background of the char(see vga_color enum for available colors)
 Output:
 */
-void terminal_putchar(char c, char foregroundColor, char backgroundColor);
+void terminal_putchar(char c, char foregroundColor, char backgroundColor, bool updateCursor);
 
 /*
 Writes a char to the screen, with the default colors(foreground=light gray, background=black).
@@ -40,7 +40,7 @@ Input:
 c - the char to write to the screen
 Output:
 */
-void terminal_putchar_default(char c);
+void terminal_putchar_default(char c, bool updateCursor);
 
 /*
 Prints a null terminated string to the screen.
@@ -58,5 +58,13 @@ size - the size of the array
 Output:
 */
 void terminal_print(const char* const arr, unsigned int size);
+
+/*
+Sets a new cursor position.
+Input:
+pos - the new position of the cursor
+Output:
+*/
+void terminal_set_cursor_position(unsigned short pos);
 
 #endif
