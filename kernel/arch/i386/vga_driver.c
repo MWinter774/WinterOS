@@ -1,20 +1,47 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <kernel/vga_driver.h>
 
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
-static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
+static volatile uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
 
-static size_t terminal_row = 0;
-static size_t terminal_column = 0;
-static uint8_t terminal_color = 0;
-static uint16_t* terminal_buffer;
+static unsigned char terminal_row = 0;
+static unsigned char terminal_column = 0;
 
-void terminal_putchar(unsigned int i, char c, char foregroundColor, char backgroundColor)
+void terminal_putchar(char c, char foregroundColor, char backgroundColor)
 {
-	VGA_MEMORY[i] = ((backgroundColor & 0x0F) << 12) | ((foregroundColor & 0x0F) << 8) | (c & 0xFF);
+	/* Writes the char to the vga memory address */
+	VGA_MEMORY[(VGA_ROWS * terminal_row) + terminal_column] = ((backgroundColor & 0x0F) << 12) |
+	 ((foregroundColor & 0x0F) << 8) | (c & 0xFF);
+
+	 /* Moves the cursor */
+	 if(++terminal_column >= VGA_COLS)
+	 {
+		 terminal_column = 0;
+		 if(++terminal_row >= VGA_ROWS)
+		 {
+			 terminal_row = 0;
+		 }
+	 }
+}
+
+void terminal_putchar_default(char c)
+{
+	/* Writes the char to the vga memory address */
+	VGA_MEMORY[(VGA_COLS * terminal_row) + terminal_column] = ((VGA_COLOR_BLACK & 0x0F) << 12) |
+	 ((VGA_COLOR_LIGHT_GREY & 0x0F) << 8) | (c & 0xFF);
+
+	 /* Moves the cursor */
+	 terminal_column++;
+	 if(terminal_column >= VGA_COLS)
+	 {
+		 terminal_column = 0;
+		 terminal_row++;
+		 if(terminal_row >= VGA_ROWS)
+		 {
+			 terminal_row = 0;
+		 }
+	 }
 }

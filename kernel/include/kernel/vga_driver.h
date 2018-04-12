@@ -1,7 +1,8 @@
 #ifndef _KERNEL_FRAME_BUFFER_H
 #define _KERNEL_FRAME_BUFFER_H
 
-#include <stddef.h>
+#define VGA_COLS 80
+#define VGA_ROWS 25
 
 enum vga_color
 {
@@ -23,6 +24,22 @@ enum vga_color
 	VGA_COLOR_WHITE = 15,
 };
 
-void terminal_putchar(unsigned int i, char c, char foregroundColor, char backgroundColor);
+/*
+Writes a char to the screen.
+Input:
+c - the char to write to the screen
+foregroundColor - the color of the char(see vga_color enum for available colors)
+backgroundColor - the color of the background of the char(see vga_color enum for available colors)
+Output:
+*/
+void terminal_putchar(char c, char foregroundColor, char backgroundColor);
+
+/*
+Writes a char to the screen, with the default colors(foreground=light gray, background=black).
+Input:
+c - the char to write to the screen
+Output:
+*/
+void terminal_putchar_default(char c);
 
 #endif
