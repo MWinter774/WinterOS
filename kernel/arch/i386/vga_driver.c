@@ -44,7 +44,7 @@ void terminal_putchar(char c, char foregroundColor, char backgroundColor, bool u
 	if(cursorPos >= VGA_SCREEN_SIZE)
 	{
 		//TODO: Scroll the screen
-		cursorPos = 0;
+		terminal_scroll();
 	}
 
 	if(updateCursor)
@@ -70,7 +70,7 @@ void terminal_putchar_default(char c, bool updateCursor)
 	if(cursorPos >= VGA_SCREEN_SIZE)
 	{
 		//TODO: Scroll the screen
-		cursorPos = 0;
+		terminal_scroll();
 	}
 
 	if(updateCursor)
@@ -103,4 +103,17 @@ void terminal_set_cursor_position(unsigned short pos)
 {
 	cursorPos = pos;
 	update_cursor();
+}
+
+void terminal_scroll()
+{
+	/* Bring up each line by 1 line */
+	for(unsigned int i = 1; i < VGA_ROWS; i++)
+	{
+		for(unsigned int j = 0; j < VGA_COLS; j++)
+		{
+			VGA_MEMORY[((i - 1) * VGA_COLS) + j] = VGA_MEMORY[(i * VGA_COLS) + j];
+		}
+	}
+	cursorPos = (VGA_ROWS - 1) * VGA_COLS;
 }

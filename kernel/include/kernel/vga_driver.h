@@ -67,4 +67,11 @@ Output:
 */
 void terminal_set_cursor_position(unsigned short pos);
 
+/*
+Scrolls down the terminal.
+Input:
+Output:
+*/
+void terminal_scroll();
+
 #endif

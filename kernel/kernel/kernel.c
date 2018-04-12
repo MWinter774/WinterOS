@@ -15,6 +15,6 @@ void kmain()
 	// terminal_putchar('e', 11, 3);
 	// terminal_putchar('l', 12, 2);
 	// terminal_putchar('!', 13, 1);
-	terminal_print("test!\nanother test!!!!\nasdf#@^#$^ gs!!", 3);
+	terminal_printstring("test!\nanother test!!!!\nasdf#@^#$^ gs!!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\na");
 	//printf("Hello, kernel World!\n");
 }
