@@ -42,4 +42,21 @@ Output:
 */
 void terminal_putchar_default(char c);
 
+/*
+Prints a null terminated string to the screen.
+Input:
+str - the string to print
+Output:
+*/
+void terminal_printstring(const char* const str);
+
+/*
+Prints an array of chars to the screen.
+Input:
+str - the array to print
+size - the size of the array
+Output:
+*/
+void terminal_print(const char* const arr, unsigned int size);
+
 #endif
