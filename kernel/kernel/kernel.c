@@ -15,6 +15,18 @@ void kmain()
 	// terminal_putchar('e', 11, 3);
 	// terminal_putchar('l', 12, 2);
 	// terminal_putchar('!', 13, 1);
-	terminal_printstring("test!\nanother test!!!!\nasdf#@^#$^ gs!!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\na");
+	unsigned long long i = 0;
+	char c = 'A';
+	char str[3] = { c, '\n', '\0' };
+	while(true)
+	{
+		if(i % 9000000 == 0)
+		{
+			str[0] = c;
+			terminal_printstring(str);
+			c++;
+		}
+		i++;
+	}
 	//printf("Hello, kernel World!\n");
 }

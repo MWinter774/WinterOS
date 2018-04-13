@@ -115,5 +115,6 @@ void terminal_scroll()
 			VGA_MEMORY[((i - 1) * VGA_COLS) + j] = VGA_MEMORY[(i * VGA_COLS) + j];
 		}
 	}
+	VGA_MEMORY[(VGA_ROWS - 1) * VGA_COLS] = ((VGA_COLOR_BLACK & 0x0F) << 12) | ((VGA_COLOR_LIGHT_GREY & 0x0F) << 8);
 	cursorPos = (VGA_ROWS - 1) * VGA_COLS;
 }
