@@ -19,7 +19,7 @@ static volatile uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
 static const int VGA_SCREEN_SIZE = VGA_COLS * VGA_ROWS;
 static unsigned short cursorPos = 0;
 
-void update_cursor()
+void terminal_update_cursor()
 {
 	outb(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
 	outb(FB_DATA_PORT, ((cursorPos >> 8) & 0x00FF));
@@ -49,7 +49,7 @@ void terminal_putchar(char c, char foregroundColor, char backgroundColor, bool u
 
 	if(updateCursor)
 	{
-		update_cursor();
+		terminal_update_cursor();
 	}
 }
 
@@ -75,7 +75,7 @@ void terminal_putchar_default(char c, bool updateCursor)
 
 	if(updateCursor)
 	{
-		update_cursor();
+		terminal_update_cursor();
 	}
 }
 
@@ -87,7 +87,7 @@ void terminal_printstring(const char* const str)
 		terminal_putchar_default(*i, false);
 		i++;
 	}
-	update_cursor();
+	terminal_update_cursor();
 }
 
 void terminal_print(const char* const arr, unsigned int size)
@@ -96,13 +96,13 @@ void terminal_print(const char* const arr, unsigned int size)
 	{
 		terminal_putchar_default(arr[i], false);
 	}
-	update_cursor();
+	terminal_update_cursor();
 }
 
 void terminal_set_cursor_position(unsigned short pos)
 {
 	cursorPos = pos;
-	update_cursor();
+	terminal_update_cursor();
 }
 
 void terminal_scroll()

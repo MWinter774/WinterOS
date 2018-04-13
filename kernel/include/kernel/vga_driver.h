@@ -74,4 +74,11 @@ Output:
 */
 void terminal_scroll();
 
+/*
+Updates the cursor position on the screen.
+Input:
+Output:
+*/
+void terminal_update_cursor();
+
 #endif
