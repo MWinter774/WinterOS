@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <limits.h>
+#include <kernel/gdt.h>
 
 void kmain()
 {
+	kernel_init_gdt();
 	printf("Hello, kernel World!\n");
 	printf("Some tests:\n");
 	printf("\"HI I AM A STRING!\" = %s\n", "\"HI I AM A STRING!\"");
