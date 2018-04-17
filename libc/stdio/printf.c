@@ -95,11 +95,13 @@ int printf(const char* format, ...)
       int num = originalNum > 0 ? originalNum : originalNum * -1;
       char str[12] = { 0 }; //maximum number of digits for int number, including the minus sign(-)
       size_t i = 0;
-      while(num != 0)
+
+      do
       {
         str[i++] = (num % 10) + '0';
         num /= 10;
-      }
+      } while(num != 0);
+      
       if(originalNum < 0)
       {
         str[i++] = '-';

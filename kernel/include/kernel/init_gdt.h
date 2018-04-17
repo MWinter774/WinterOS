@@ -1,5 +1,5 @@
-#ifndef _KERNEL_GDT_H
-#define _KERNEL_GDT_H
+#ifndef _KERNEL_INIT_GDT_H
+#define _KERNEL_INIT_GDT_H
 
 typedef struct __attribute__((packed))
 {
@@ -22,4 +22,4 @@ Initializes the gdt.
 */
 void kernel_init_gdt();
 
-#endif /* end of include guard: _KERNEL_GDT_H */
+#endif /* end of include guard: _KERNEL_INIT_GDT_H */
